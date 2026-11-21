@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ Lyftr AI
+#  Lyftr AI
 
 ### The chatbot that shows you **how** every answer was made.
 
