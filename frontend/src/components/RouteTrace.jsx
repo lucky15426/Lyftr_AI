@@ -1,12 +1,12 @@
-import { Database, KeyRound, Cpu, UserRound, XCircle, CheckCircle2, Search } from "lucide-react";
+import { Database, KeyRound, Cpu, UserRound, X, Search } from "lucide-react";
 
 // Turn response metadata into the ordered hops a request took.
 export function buildRoute(meta) {
   if (!meta) return [];
   if (meta.resolution_source === "LLM_CACHE") {
-    return [{ id: "cache", label: "Cache", state: "hit", icon: Database }];
+    return [{ id: "cache", label: "cache", state: "hit", icon: Database }];
   }
-  const hops = [{ id: "cache", label: "Cache", state: "miss", icon: Search }];
+  const hops = [{ id: "cache", label: "cache", state: "miss", icon: Search }];
   const failed = meta.fallback_attempts || 0;
   for (let i = 1; i <= failed; i++) {
     hops.push({ id: `key_${i}`, label: `key_${i}`, state: "fail", icon: KeyRound });
@@ -17,34 +17,32 @@ export function buildRoute(meta) {
 }
 
 const STATE = {
-  hit: "border-cache/60 bg-cache/10 text-cache",
-  miss: "border-zinc-600/60 bg-zinc-500/10 text-zinc-400",
-  fail: "border-bad/60 bg-bad/10 text-bad",
-  ok: "border-live/60 bg-live/10 text-live",
-  idle: "border-line bg-white/[0.02] text-zinc-600",
-  busy: "border-warn/60 bg-warn/10 text-warn",
+  hit: "border-cache bg-cache/10 text-cache",
+  miss: "border-line bg-transparent text-muted line-through decoration-muted/50",
+  fail: "border-bad bg-bad/10 text-bad line-through",
+  ok: "border-live bg-live/10 text-live",
 };
 
-export function Hop({ hop, state }) {
-  const Icon = state === "fail" ? XCircle : state === "hit" || state === "ok" ? hop.icon : hop.icon;
+export function Hop({ hop }) {
+  const Icon = hop.state === "fail" ? X : hop.icon;
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10.5px] ${STATE[state ?? hop.state]}`}>
+    <span className={`inline-flex items-center gap-1 rounded-md border-[1.5px] px-1.5 py-0.5 font-mono text-[10.5px] font-medium ${STATE[hop.state]}`}>
       <Icon size={11} aria-hidden="true" />
       {hop.label}
     </span>
   );
 }
 
-export function RouteLine({ hops, busy = false }) {
+export function RouteLine({ hops }) {
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white/[0.03] px-2 py-0.5 font-mono text-[10.5px] text-zinc-400">
+      <span className="inline-flex items-center gap-1 rounded-md border-[1.5px] border-ink bg-ink px-1.5 py-0.5 font-mono text-[10.5px] font-medium text-paper">
         <UserRound size={11} /> you
       </span>
       {hops.map((h) => (
         <span key={h.id + h.state} className="inline-flex items-center gap-1.5">
-          <span className="h-px w-3 bg-line" />
-          <Hop hop={h} state={busy ? "busy" : undefined} />
+          <span className="font-mono text-[11px] text-muted">→</span>
+          <Hop hop={h} />
         </span>
       ))}
     </div>
@@ -52,9 +50,7 @@ export function RouteLine({ hops, busy = false }) {
 }
 
 export function sourceTheme(meta) {
-  if (meta?.resolution_source === "LLM_CACHE") return { rail: "bg-cache", text: "text-cache", name: "Served from cache" };
-  if (meta?.fallback_attempts > 0) return { rail: "bg-warn", text: "text-warn", name: "Recovered via failover" };
-  return { rail: "bg-live", text: "text-live", name: "Live inference" };
+  if (meta?.resolution_source === "LLM_CACHE") return { bar: "bg-cache", text: "text-cache", shadow: "var(--color-cache)", name: "From cache" };
+  if (meta?.fallback_attempts > 0) return { bar: "bg-warn", text: "text-warn", shadow: "var(--color-warn)", name: "Failover" };
+  return { bar: "bg-live", text: "text-live", shadow: "var(--color-live)", name: "Live" };
 }
-
-export { CheckCircle2 };

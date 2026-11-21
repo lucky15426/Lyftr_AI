@@ -94,7 +94,7 @@ export default function App() {
   const lastMeta = metas[metas.length - 1];
 
   return (
-    <div className="aurora relative flex h-full overflow-hidden bg-ink text-zinc-100">
+    <div className="flex h-full bg-paper text-ink">
       <Sidebar
         sessionId={sessionId}
         status={status}
@@ -106,45 +106,43 @@ export default function App() {
         stats={stats}
       />
 
-      <main className="relative z-10 flex min-w-0 flex-1 flex-col">
-        <header className="glass flex items-center gap-3 border-x-0 border-t-0 px-4 py-2.5">
-          <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-white/5 md:hidden" aria-label="Open sidebar">
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="flex items-center gap-3 border-b-[1.5px] border-ink bg-card px-4 py-2.5">
+          <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-1.5 text-muted hover:bg-ink/5 md:hidden" aria-label="Open sidebar">
             <Menu size={20} />
           </button>
-          <div className="flex min-w-0 flex-1 items-center gap-2.5">
-            <Radio size={14} className={loading ? "text-warn" : "text-zinc-500"} />
-            <span className="hidden font-mono text-[10.5px] uppercase tracking-[0.2em] text-zinc-500 sm:block">Live route</span>
-            <div className="min-w-0 flex-1">
-              {loading ? (
-                <div className="relative h-px w-full bg-line" data-testid="route-busy">
-                  <span className="packet" />
-                  <span className="absolute -top-4 left-0 font-mono text-[10.5px] text-warn">routing request…</span>
-                </div>
-              ) : lastMeta ? (
-                <RouteLine hops={buildRoute(lastMeta)} />
-              ) : (
-                <span className="font-mono text-[11px] text-zinc-600">idle — send a message to trace its route</span>
-              )}
-            </div>
+          <Radio size={14} className={loading ? "text-warn" : "text-muted"} />
+          <span className="hidden font-mono text-[10.5px] uppercase tracking-[0.2em] text-muted sm:block">Last route</span>
+          <div className="min-w-0 flex-1">
+            {loading ? (
+              <div className="relative h-0.5 w-full bg-ink/20" data-testid="route-busy">
+                <span className="packet" />
+                <span className="absolute -top-5 left-0 font-mono text-[10.5px] text-warn">tracing route…</span>
+              </div>
+            ) : lastMeta ? (
+              <RouteLine hops={buildRoute(lastMeta)} />
+            ) : (
+              <span className="font-mono text-[11px] text-muted">idle · send a message to trace its route</span>
+            )}
           </div>
         </header>
 
-        <div className="grid-bg flex-1 overflow-y-auto" data-testid="chat-scroll">
+        <div className="paper flex-1 overflow-y-auto" data-testid="chat-scroll">
           {messages.length === 0 && !loading ? (
             <Welcome onPick={(t) => send(t)} />
           ) : (
-            <div className="mx-auto flex max-w-3xl flex-col gap-5 px-4 py-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-7 px-4 py-8">
               {messages.map((m) => (
                 <Message key={m.id} message={m} maxLatency={maxLatency} />
               ))}
               {loading && (
-                <div className="rise glass flex items-center gap-3 rounded-2xl px-4 py-3.5" data-testid="loading-indicator" role="status" aria-label="Assistant is responding">
+                <div className="rise flex w-fit items-center gap-3 rounded-xl border-[1.5px] border-ink bg-card px-4 py-3" data-testid="loading-indicator" role="status" aria-label="Assistant is responding">
                   <span className="flex gap-1">
                     {[0, 1, 2].map((i) => (
-                      <span key={i} className="h-1.5 w-6 animate-pulse rounded-full bg-cyan-300/70" style={{ animationDelay: `${i * 0.2}s` }} />
+                      <span key={i} className="hop h-2 w-2 rounded-full bg-ink" style={{ animationDelay: `${i * 0.15}s` }} />
                     ))}
                   </span>
-                  <span className="caret font-mono text-xs text-zinc-400">thinking</span>
+                  <span className="font-mono text-xs text-muted">thinking</span>
                 </div>
               )}
               <div ref={endRef} />
@@ -152,13 +150,13 @@ export default function App() {
           )}
         </div>
 
-        <div className="glass border-x-0 border-b-0 px-4 pb-7 pt-3">
+        <div className="border-t-[1.5px] border-ink bg-card px-4 pb-8 pt-3">
           <div className="mx-auto max-w-3xl">
             {error && (
-              <div role="alert" data-testid="error-message" className="mb-3 flex items-start gap-2 rounded-xl border border-bad/40 bg-bad/10 px-3 py-2.5 text-sm text-rose-200">
-                <AlertCircle size={16} className="mt-0.5 shrink-0 text-bad" />
+              <div role="alert" data-testid="error-message" className="mb-3 flex items-start gap-2 rounded-lg border-[1.5px] border-bad bg-bad/10 px-3 py-2.5 text-sm text-bad">
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
                 <span className="flex-1">{error}</span>
-                <button onClick={() => setError("")} aria-label="Dismiss error" className="text-rose-300/60 hover:text-rose-100">
+                <button onClick={() => setError("")} aria-label="Dismiss error" className="opacity-60 hover:opacity-100">
                   <X size={16} />
                 </button>
               </div>
@@ -167,7 +165,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setShowSystem((v) => !v)}
-              className="mb-2 flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 hover:text-zinc-200"
+              className="mb-2 flex items-center gap-1.5 font-mono text-[11px] text-muted hover:text-ink"
               aria-expanded={showSystem}
             >
               <Settings2 size={13} /> system prompt{systemPrompt.trim() ? " · set" : " (optional)"}
@@ -182,7 +180,7 @@ export default function App() {
                 maxLength={4000}
                 placeholder="e.g. You are a concise assistant that answers in one sentence."
                 aria-label="System prompt"
-                className="mb-3 w-full resize-none rounded-xl border border-line bg-panel px-3 py-2 text-sm text-zinc-200 outline-none placeholder:text-zinc-600 focus:border-cyan-300/60"
+                className="mb-3 w-full resize-none rounded-lg border-[1.5px] border-ink bg-paper px-3 py-2 text-sm outline-none placeholder:text-muted/70 focus:border-warn"
               />
             )}
 
