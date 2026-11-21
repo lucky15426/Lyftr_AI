@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-ink: #07080f;
+  --color-panel: #0e1019;
+  --color-line: #1d2030;
+  --color-live: #5eead4;
+  --color-cache: #a3e635;
+  --color-warn: #fbbf24;
+  --color-bad: #fb7185;
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-ink);
+  color: #e7e9f3;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Slow drifting aurora behind everything */
+.aurora::before, .aurora::after {
+  content: ""; position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(110px); opacity: .28;
+}
+.aurora::before { width: 520px; height: 520px; left: -120px; top: -140px; background: #7c3aed; animation: drift 22s ease-in-out infinite alternate; }
+.aurora::after  { width: 480px; height: 480px; right: -140px; bottom: -160px; background: #0891b2; animation: drift 28s ease-in-out infinite alternate-reverse; }
+@keyframes drift { to { transform: translate(90px, 60px) scale(1.15); } }
+
+.glass { background: rgba(14, 16, 25, .72); backdrop-filter: blur(14px); border: 1px solid var(--color-line); }
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.99) } to { opacity: 1; transform: none } }
+.rise { animation: rise .35s cubic-bezier(.2,.8,.2,1) both; }
+
+/* Packet travelling along the route while a request is in flight */
+@keyframes packet { 0% { left: 0; opacity: 0 } 10% { opacity: 1 } 90% { opacity: 1 } 100% { left: calc(100% - 8px); opacity: 0 } }
+.packet { position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px 3px rgba(94,234,212,.8); animation: packet 1.3s linear infinite; }
+
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 currentColor } 100% { box-shadow: 0 0 0 8px transparent } }
+.pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+
+@keyframes grow { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+.grow { transform-origin: left; animation: grow .7s cubic-bezier(.2,.8,.2,1) both; }
+
+.caret::after { content: "▍"; margin-left: 2px; color: var(--color-live); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0 } }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #232739; border-radius: 8px; }

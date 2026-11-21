@@ -1,0 +1,8 @@
+fastapi==0.162.5
+uvicorn[standard]==0.54.0
+litellm==1.110.2
+pydantic==2.14.4
+python-dotenv==1.2.4
+# imported by litellm's cache code path but not declared as dependencies by litellm
+orjson==3.13.0
+soundfile==0.14.0
